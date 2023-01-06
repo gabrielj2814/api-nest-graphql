@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Especialidad {
+  id: String!
+  nombre: String!
+}
+
+type Proyecto {
+  id: String!
+  nombre: String!
+  descripcion: String!
+  developers: [Developer!]!
+  roles: [Especialidad!]!
+  status: Status!
+}
+
+enum Status {
+  ACTIVO
+  INACTIVO
+}
+
+type Developer {
+  id: String!
+  nombre: String!
+  email: String!
+  proyectos: [Proyecto!]
+  roles: [Especialidad!]!
+}
+
+type Query {
+  getEspecialidades: [Especialidad!]!
+  getEspecialidad(id: String!): Especialidad
+  getDeveloper(id: String!): Developer
+  getDevelopers: [Developer!]
+}
+
+type Mutation {
+  setEspecialidad(nombre: String!): Especialidad!
+  editarEspecialidad(nombre: String!, id: String!): Especialidad
+  eliminarEspecialidad(id: String!): Especialidad
+  setDeveloper(nombre: String!, email: String!, proyectos: [ProyectoDto!], roles: [EspecialidadDto!]): Developer
+}
+
+input ProyectoDto {
+  id: String!
+  nombre: String!
+  descripcion: String!
+  developers: [DeveloperDto!]!
+  roles: [EspecialidadDto!]!
+  status: Status!
+}
+
+input DeveloperDto {
+  id: String!
+  nombre: String!
+  email: String!
+  roles: [EspecialidadDto!]!
+}
+
+input EspecialidadDto {
+  id: String!
+  nombre: String!
+}
