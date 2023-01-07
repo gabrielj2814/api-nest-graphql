@@ -34,6 +34,7 @@ type Query {
   getEspecialidad(id: String!): Especialidad
   getDeveloper(id: String!): Developer
   getDevelopers: [Developer!]
+  getDevelopersPorRolYProyecto(rol: EspecialidadDto!, idProyecto: String!): [Developer!]!
   getProyectos: [Proyecto!]
   getProyecto(id: Int!): Proyecto!
   getProyectosPorRolesYStatus(roles: [EspecialidadDto!]!, status: Int!): [Proyecto!]!

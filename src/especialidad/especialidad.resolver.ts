@@ -53,6 +53,8 @@ let data: typeEspecialidad[] = [
     }
 ]
 
+// TODO: valiar texto en blanco y etc...
+
 @Resolver()
 export class EspecialidadResolver {
 

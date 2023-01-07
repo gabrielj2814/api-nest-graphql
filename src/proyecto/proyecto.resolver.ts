@@ -20,7 +20,19 @@ let data:typeProyecto[] = [
         nombre:"Proyecto A",
         descripcion:"descripcion proyecto A",
         status:Status.ACTIVO,
-        developers:[],
+        developers:[
+            {
+                id:"e141cc00-8e10-11ed-8c1c-9b2266fb0f10",
+                nombre:"dev a",
+                email:"dev_a_@gmail.com",
+                roles:[
+                    {
+                        "id": "438dea50-8e08-11ed-9b3c-bd0785885400",
+                        "nombre": "backend java"
+                    },
+                ]
+            },
+        ],
         roles:[
             {
                 "id": "438dea50-8e08-11ed-9b3c-bd0785885400",
@@ -34,7 +46,19 @@ let data:typeProyecto[] = [
         nombre:"Proyecto B",
         descripcion:"descripcion proyecto B",
         status:Status.ACTIVO,
-        developers:[],
+        developers:[
+            {
+                id:"e141cc01-8e10-11ed-8c1c-9b2266fb0f10",
+                nombre:"dev b",
+                email:"dev_b_@gmail.com",
+                roles:[
+                    {
+                        "id": "438dea51-8e08-11ed-9b3c-bd0785885400",
+                        "nombre": "backend php"
+                    }
+                ]
+            }
+        ],
         roles:[
             {
                 "id": "438dea51-8e08-11ed-9b3c-bd0785885400",
@@ -72,7 +96,9 @@ export class ProyectoResolver {
     ):typeProyecto[]{
         let proyectos={}
         let resultados:typeProyecto[]=[]
+        // filtrado por estado
         let proyectosFiltradoPorEstado:typeProyecto[]= data.filter( proyecto => proyecto.status===status)
+        // filtrado por roles
         for (const rolFiltro of roles) {
             console.log(rolFiltro.nombre)
             proyectosFiltradoPorEstado.forEach(proyecto => {

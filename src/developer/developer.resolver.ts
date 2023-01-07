@@ -10,13 +10,28 @@ import ProyectoDto from '../dto/proyecto.dto';
 import EspecialidadDto from 'src/dto/especialidad.dto';
 // Utilidades
 import {v1} from "uuid"
+import { Status } from 'src/proyecto/enum/status';
 
 let data:typeDeveloper[]=[
     {
         id:"e141cc00-8e10-11ed-8c1c-9b2266fb0f10",
         nombre:"dev a",
         email:"dev_a_@gmail.com",
-        proyectos: [],
+        proyectos: [
+            {
+                id:"89636e20-8e0c-11ed-9a02-6521732c74d9",
+                nombre:"Proyecto A",
+                descripcion:"descripcion proyecto A",
+                status:Status.ACTIVO,
+                roles:[
+                    {
+                        "id": "438dea50-8e08-11ed-9b3c-bd0785885400",
+                        "nombre": "backend java"
+                    }
+        
+                ]
+            }
+        ],
         roles:[
             {
                 "id": "438dea50-8e08-11ed-9b3c-bd0785885400",
@@ -28,7 +43,20 @@ let data:typeDeveloper[]=[
         id:"e141cc01-8e10-11ed-8c1c-9b2266fb0f10",
         nombre:"dev b",
         email:"dev_b_@gmail.com",
-        proyectos: [],
+        proyectos: [
+            {
+                id:"89636e21-8e0c-11ed-9a02-6521732c74d9",
+                nombre:"Proyecto B",
+                descripcion:"descripcion proyecto B",
+                status:Status.ACTIVO,
+                roles:[
+                    {
+                        "id": "438dea51-8e08-11ed-9b3c-bd0785885400",
+                        "nombre": "backend php"
+                    }
+                ]
+            }
+        ],
         roles:[
             {
                 "id": "438dea51-8e08-11ed-9b3c-bd0785885400",
@@ -39,6 +67,7 @@ let data:typeDeveloper[]=[
 ]
 
 // TODO: valiar email, texto en blanco y etc...
+// TODO: asignar proyectos a developers con su validacion de rol
 
 @Resolver()
 export class DeveloperResolver {
@@ -54,6 +83,30 @@ export class DeveloperResolver {
     @Query( type => [Developer], {nullable:true})
     getDevelopers():typeDeveloper[]{
         return data
+    }
+
+    @Query( type => [Developer])
+    getDevelopersPorRolYProyecto(
+        @Args({name: "rol", type: () => EspecialidadDto}) rol:typeEspecialidad,
+        @Args({name: "idProyecto", type: () => String}) idProyecto:string
+    ): typeDeveloper[]{
+        let developersFiltradosPorRol:typeDeveloper[]=[]
+        let developersFiltradosPorProyecto:typeDeveloper[]=[]
+        // filtrados por rol
+        for (const developer of data) {
+            let rolDeveloper=developer.roles.find(rolDev => rolDev.id===rol.id)
+            if(rolDeveloper!==undefined){
+                developersFiltradosPorRol.push(developer)
+            }
+        }
+        // filtrados por proyecto
+        for (const developer2 of developersFiltradosPorRol) {
+            let ProyectosDev = developer2.proyectos.find( proyecto => proyecto.id===idProyecto )
+            if(ProyectosDev!==undefined){
+                developersFiltradosPorProyecto.push(developer2)
+            }
+        }
+        return developersFiltradosPorProyecto
     }
 
     @Mutation( returns => Developer, { nullable: true})
