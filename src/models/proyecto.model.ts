@@ -22,14 +22,13 @@ export default class Proyecto {
     @Field( type => String)
     descripcion:string
 
-    @Field( type => [Developer])
-    developers:typeDeveloper[]
+    @Field( type => [Developer], {nullable: true})
+    developers?:typeDeveloper[]
 
     @Field( type => [Especialidad])
     roles:typeEspecialidad[]
 
     @Field( type => Status)
     status: Status
-
 
 }

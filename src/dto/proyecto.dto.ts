@@ -1,8 +1,8 @@
 import {Field, ObjectType, InputType, registerEnumType} from "@nestjs/graphql"
 import typeEspecialidad from "src/especialidad/interfaces/types/especialidad"
-import typeDeveloper from "src/developer/interfaces/types/developer"
+// import typeDeveloper from "src/developer/interfaces/types/developer"
 import Especialidad from "./especialidad.dto"
-import Developer from "./developer.dto"
+// import Developer from "./developer.dto"
 
 import { Status } from "src/proyecto/enum/status"
 
@@ -22,8 +22,8 @@ export default class ProyectoDto {
     @Field( type => String)
     descripcion:string
 
-    @Field( type => [Developer])
-    developers:typeDeveloper[]
+    // @Field( type => [Developer])
+    // developers:typeDeveloper[]
 
     @Field( type => [Especialidad])
     roles:typeEspecialidad[]

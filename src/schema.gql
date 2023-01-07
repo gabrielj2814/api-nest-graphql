@@ -11,7 +11,7 @@ type Proyecto {
   id: String!
   nombre: String!
   descripcion: String!
-  developers: [Developer!]!
+  developers: [Developer!]
   roles: [Especialidad!]!
   status: Status!
 }
@@ -34,20 +34,29 @@ type Query {
   getEspecialidad(id: String!): Especialidad
   getDeveloper(id: String!): Developer
   getDevelopers: [Developer!]
+  getProyectos: [Proyecto!]
+  getProyecto(id: Int!): Proyecto!
+  getProyectosPorRolesYStatus(roles: [EspecialidadDto!]!, status: Int!): [Proyecto!]!
+}
+
+input EspecialidadDto {
+  id: String!
+  nombre: String!
 }
 
 type Mutation {
   setEspecialidad(nombre: String!): Especialidad!
-  editarEspecialidad(nombre: String!, id: String!): Especialidad
   eliminarEspecialidad(id: String!): Especialidad
-  setDeveloper(nombre: String!, email: String!, proyectos: [ProyectoDto!], roles: [EspecialidadDto!]): Developer
+  setDeveloper(nombre: String!, email: String!, proyectos: [ProyectoDto!], roles: [EspecialidadDto!]!): Developer
+  eliminarDeveloper(id: String!): Developer
+  setProyectos(nombre: String!, descripcion: String!, status: Int!, developers: [DeveloperDto!], roles: [EspecialidadDto!]!): Proyecto!
+  asignarDevHaProyecto(idProyecto: String!, developers: [DeveloperDto!]!): [Developer!]!
 }
 
 input ProyectoDto {
   id: String!
   nombre: String!
   descripcion: String!
-  developers: [DeveloperDto!]!
   roles: [EspecialidadDto!]!
   status: Status!
 }
@@ -57,9 +66,4 @@ input DeveloperDto {
   nombre: String!
   email: String!
   roles: [EspecialidadDto!]!
-}
-
-input EspecialidadDto {
-  id: String!
-  nombre: String!
 }
