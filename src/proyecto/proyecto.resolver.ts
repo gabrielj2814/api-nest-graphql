@@ -102,13 +102,22 @@ export class ProyectoResolver {
             proyectosFiltradoPorEstado.forEach(proyecto => {
                 proyecto.roles.forEach(rol => {
                     if(rol.id===rolFiltro.id){
-                        proyectos[proyecto.id]=proyecto
+                        if(proyectos[proyecto.id]){
+                            proyectos[proyecto.id]=proyectos[proyecto.id]+1
+                        }
+                        else{
+                            proyectos[proyecto.id]=1
+                        }
+                        
                     }
                 })
             })
         }
         for (const key in proyectos) {
-            resultados.push(proyectos[key])
+            if(proyectos[key]===roles.length){
+                resultados.push(data.find(pro => pro.id===key))
+            }
+            
         }
         // console.log("proyectos filtrador",resultados)
         return resultados
@@ -147,7 +156,7 @@ export class ProyectoResolver {
             nombre,
             descripcion,
             status:0,
-            developers,
+            developers:(developers===undefined)?[]:developers,
             roles,
         }
         proyecto.status=(status===Status.ACTIVO)?Status.ACTIVO:Status.INACTIVO
@@ -211,6 +220,9 @@ export class ProyectoResolver {
 
     removerDeveloperYaAsignados(developers:typeDeveloper[],idProyecto:string,data:typeProyecto[]):typeDeveloper[]{
         let proyecto:typeProyecto = data.find(proyectoBusqueda => proyectoBusqueda.id === idProyecto)
+        // if(proyecto.developers===undefined){
+        //     proyecto.developers=[]
+        // }
         for (const developer of proyecto.developers) {
             developers=developers.filter(dev => dev.id!==developer.id)
         }

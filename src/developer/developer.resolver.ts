@@ -116,7 +116,7 @@ export class DeveloperResolver {
     setDeveloper(
         @Args({name: "nombre", type: () => String}) nombre:string,
         @Args({name: "email", type: () => String}) email:string,
-        @Args({name: "proyectos", type: () => [ProyectoDto], nullable: true}) proyectos:typeProyecto[] = null,
+        @Args({name: "proyectos", type: () => [ProyectoDto], nullable: true}) proyectos:typeProyecto[],
         @Args({name: "roles", type: () => [EspecialidadDto]}) roles: typeEspecialidad[]
     ):typeDeveloper{
         if(validaciones.validarCadenaVacia(validaciones.eliminarEspaciosEnBlanco(nombre))){
@@ -143,7 +143,7 @@ export class DeveloperResolver {
             id:v1(),
             nombre,
             email,
-            proyectos: (proyectos!==null)?proyectos:null,
+            proyectos: (proyectos===undefined)?[]:proyectos,
             roles
         }
         data.push(develorper)
