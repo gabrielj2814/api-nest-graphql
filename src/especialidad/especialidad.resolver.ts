@@ -1,9 +1,12 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-
-import { v1 } from "uuid"
-
+// tipos
 import typeEspecialidad from './interfaces/types/especialidad';
+// modelos
 import Especialidad from "../models/especialidad.model"
+// Utilidades
+import { v1 } from "uuid"
+import { validaciones } from 'src/utils/validaciones';
+import { UserInputError } from 'apollo-server-express';
 
 
 let data: typeEspecialidad[] = [
@@ -53,7 +56,6 @@ let data: typeEspecialidad[] = [
     }
 ]
 
-// TODO: valiar texto en blanco y etc...
 
 @Resolver()
 export class EspecialidadResolver {
@@ -73,30 +75,21 @@ export class EspecialidadResolver {
     setEspecialidad(
         @Args({ name: "nombre", type: () => String }) nombre: string
     ): typeEspecialidad {
-        let especialidad: typeEspecialidad = {
-            id: v1(),
-            nombre: nombre
+        if(validaciones.validarCadenaVacia(validaciones.eliminarEspaciosEnBlanco(nombre))){
+            throw new UserInputError("el argumento nombre no puedes ser vacio", {
+                invalidArgs:"nombre"
+            })
         }
-        data.push(especialidad)
-        return especialidad
-    }
+        else{
+            let especialidad: typeEspecialidad = {
+                id: v1(),
+                nombre: nombre
+            }
+            data.push(especialidad)
+            return especialidad
+        }
 
-    // @Mutation(returns => Especialidad, { nullable: true })
-    // editarEspecialidad(
-    //     @Args({name:"nombre", type: () => String}) nombre:string,
-    //     @Args({name:"id", type: () => String}) id:string,
-    // ):typeEspecialidad{
-    //     if(!data.find(especialidad => especialidad.id === id)){
-    //         return null
-    //     }
-    //     data = data.map((especialidad) => {
-    //         if(especialidad.id===id){
-    //             especialidad.nombre= nombre
-    //         }
-    //         return especialidad
-    //     })
-    //     return data.find(especialidad => especialidad.id === id)
-    // }
+    }
 
     @Mutation(returns => Especialidad, { nullable: true })
     eliminarEspecialidad(

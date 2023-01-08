@@ -1,4 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { UserInputError } from 'apollo-server-express';
 // modelo
 import Developer from 'src/models/developer.model';
 // interfaces
@@ -11,6 +12,7 @@ import EspecialidadDto from 'src/dto/especialidad.dto';
 // Utilidades
 import {v1} from "uuid"
 import { Status } from 'src/proyecto/enum/status';
+import { validaciones } from 'src/utils/validaciones';
 
 let data:typeDeveloper[]=[
     {
@@ -66,7 +68,6 @@ let data:typeDeveloper[]=[
     },
 ]
 
-// TODO: valiar email, texto en blanco y etc...
 // TODO: asignar proyectos a developers con su validacion de rol
 
 @Resolver()
@@ -116,6 +117,26 @@ export class DeveloperResolver {
         @Args({name: "proyectos", type: () => [ProyectoDto], nullable: true}) proyectos:typeProyecto[] = null,
         @Args({name: "roles", type: () => [EspecialidadDto]}) roles: typeEspecialidad[]
     ):typeDeveloper{
+        if(validaciones.validarCadenaVacia(validaciones.eliminarEspaciosEnBlanco(nombre))){
+            throw new UserInputError("el argumento nombre no puede ser vacio", {
+                invalidArgs:"nombre"
+            })
+        }
+        if(validaciones.validarCadenaVacia(validaciones.eliminarEspaciosEnBlanco(email))){
+            throw new UserInputError("el argumento email no puede ser vacio", {
+                invalidArgs:"email"
+            })
+        }
+        if(validaciones.validarCorreo(email)){
+            throw new UserInputError("el argumento email es invalido", {
+                invalidArgs:"email"
+            })
+        }
+        if(roles.length===0){
+            throw new UserInputError("el argumento roles no pudes ser vacio tiene que almenos pasar uno", {
+                invalidArgs:"roles"
+            })
+        }
         let develorper:typeDeveloper ={
             id:v1(),
             nombre,
