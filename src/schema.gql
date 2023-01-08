@@ -50,6 +50,7 @@ type Mutation {
   eliminarEspecialidad(id: String!): Especialidad
   setDeveloper(nombre: String!, email: String!, proyectos: [ProyectoDto!], roles: [EspecialidadDto!]!): Developer
   eliminarDeveloper(id: String!): Developer
+  asignacionProyectoHaDev(idDeveloper: String!, proyectos: [ProyectoDto!]!): [Proyecto!]!
   setProyectos(nombre: String!, descripcion: String!, status: Int!, developers: [DeveloperDto!], roles: [EspecialidadDto!]!): Proyecto!
   asignarDevHaProyecto(idProyecto: String!, developers: [DeveloperDto!]!): [Developer!]!
 }

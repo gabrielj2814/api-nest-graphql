@@ -13,6 +13,8 @@ import EspecialidadDto from 'src/dto/especialidad.dto';
 import {v1} from "uuid"
 import { Status } from 'src/proyecto/enum/status';
 import { validaciones } from 'src/utils/validaciones';
+import Proyecto from 'src/models/proyecto.model';
+import DeveloperDto from 'src/dto/developer.dto';
 
 let data:typeDeveloper[]=[
     {
@@ -155,6 +157,54 @@ export class DeveloperResolver {
         let developer:typeDeveloper = data.find(developer => developer.id===id)
         data= data.filter(developer => developer.id!==id)
         return developer
+    }
+
+    @Mutation( returns => [Proyecto])
+    asignacionProyectoHaDev(
+        @Args({name:"idDeveloper", type: () => String}) idDeveloper:string,
+        @Args({name:"proyectos", type: () => [ProyectoDto]}) proyectos:typeProyecto[],
+    ):typeProyecto[]{
+        let developer:typeDeveloper= data.find(developerBusqueda => developerBusqueda.id===idDeveloper) 
+        if(developer!==undefined){
+            proyectos=this.removerProyectosYaAsignados(proyectos,idDeveloper,data)
+            let proyectosDeveloper:typeProyecto[]=[]
+            let proyectosRechazados:typeProyecto[]=[]
+            // aqui se hace la validacion para verificar que proyectos que se intentan asignar al desarrollador cumplas con los roles que tenga asignados
+            for( let rolDeveloper of  developer.roles){
+                proyectos.forEach(proyecto => {
+                    let busquedaRol:typeEspecialidad= proyecto.roles.find( rolProyecto => rolProyecto.id===rolDeveloper.id)
+                    if(busquedaRol!==undefined){
+                        if(proyectosDeveloper.find( proyectoDeveloper => proyectoDeveloper.id===proyecto.id)===undefined){
+                            proyectosDeveloper.push(proyecto)
+                        }
+                    }
+                });
+            }
+            // asignacion de los proyectos al desarrollador
+            for (let index = 0; index < data.length; index++) {
+                if(data[index].id===idDeveloper){
+                    if(data[index].proyectos===undefined){
+                        data[index].proyectos=[]
+                    }
+                    data[index].proyectos=[...data[index].proyectos, ...proyectosDeveloper]
+                    // console.log("data =>",data[index].proyectos) 
+                    
+                }
+            }
+    
+            return proyectosDeveloper
+        }
+        else{
+            throw new UserInputError("el desarrollador no a sido encontrado")
+        }
+    }
+
+    removerProyectosYaAsignados(proyectos:typeProyecto[],idDeveloper:string,data:typeDeveloper[]):typeProyecto[]{
+        let developer:typeDeveloper = data.find(developerBusqueda => developerBusqueda.id === idDeveloper)
+        for (const proyecto of developer.proyectos) {
+            proyectos=proyectos.filter(pro => pro.id!==proyecto.id)
+        }
+        return proyectos
     }
 
 

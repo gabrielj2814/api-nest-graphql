@@ -163,56 +163,57 @@ export class ProyectoResolver {
         @Args({name: "idProyecto", type: () => String}) idProyecto:string,
         @Args({name: "developers", type: () => [DeveloperDto]}) developers:typeDeveloper[]
     ):typeDeveloper[]{
-        developers=this.removerDeveloperYaAsignados(developers,idProyecto,data)
         let proyecto:typeProyecto= data.find( proyecto => proyecto.id===idProyecto)
-        let developersProyecto:typeDeveloper[]=[]
-        let developerRechazados:typeDeveloper[]=[]
-        for( let rolProyecto of  proyecto.roles){
-            developers.forEach(developer => {
-                let busquedaRol:typeEspecialidad= developer.roles.find( rolDeveloper => rolDeveloper.id===rolProyecto.id)
-                if(busquedaRol!==undefined){
-                    if(developersProyecto.find( developerProyecto => developerProyecto.id===developer.id)===undefined){
-                        developersProyecto.push(developer)
+        if(proyecto!==undefined){
+            developers=this.removerDeveloperYaAsignados(developers,idProyecto,data)
+            let developersProyecto:typeDeveloper[]=[]
+            let developerRechazados:typeDeveloper[]=[]
+            // aqui se hace la validacion para verificar que desarroladores que se intentan asignar al proyecto cumplas con los roles que tenga asignados
+            for( let rolProyecto of  proyecto.roles){
+                developers.forEach(developer => {
+                    let busquedaRol:typeEspecialidad= developer.roles.find( rolDeveloper => rolDeveloper.id===rolProyecto.id)
+                    if(busquedaRol!==undefined){
+                        if(developersProyecto.find( developerProyecto => developerProyecto.id===developer.id)===undefined){
+                            developersProyecto.push(developer)
+                        }
                     }
-                }
-            });
-        }
-
-        for (let index = 0; index < data.length; index++) {
-            if(data[index].id===idProyecto){
-                if(data[index].developers===undefined){
-                    data[index].developers=[]
-                }
-                // let developersSet: Set<typeDeveloper>=new Set([...data[index].developers, ...developersProyecto])
-                // data[index].developers=Array.from(developersSet)
-                data[index].developers=[...data[index].developers, ...developersProyecto]
-                
-                console.log("data =>",data[index].developers) 
-                
+                });
             }
+            // asignacion de los desarrolladores al proyecto
+            for (let index = 0; index < data.length; index++) {
+                if(data[index].id===idProyecto){
+                    if(data[index].developers===undefined){
+                        data[index].developers=[]
+                    }
+                    data[index].developers=[...data[index].developers, ...developersProyecto]
+                    // console.log("data =>",data[index].developers) 
+                    
+                }
+            }
+            
+            // console.log("data",data[0])
+            developerRechazados=[...developers]
+            for (const developerProyecto of developersProyecto) {
+                developerRechazados=developerRechazados.filter(developerRechazado => developerRechazado.id!==developerProyecto.id)
+            }
+            // console.log("developers rechazados",developerRechazados)
+            if(developerRechazados.length>=1){
+                throw new UserInputError("los desarroladores que fueron rechazados", {
+                    developers:developerRechazados
+                })
+            }
+            return developersProyecto
         }
-        
-        // console.log("data",data[0])
-        developerRechazados=[...developers]
-        for (const developerProyecto of developersProyecto) {
-            developerRechazados=developerRechazados.filter(developerRechazado => developerRechazado.id!==developerProyecto.id)
+        else{
+            throw new UserInputError("el proyecto no a sido encontrado")
         }
-        // console.log("developers rechazados",developerRechazados)
-        if(developerRechazados.length>=1){
-            throw new UserInputError("los desarroladores que fueron rechazados", {
-                developers:developerRechazados
-            })
-        }
-        return developersProyecto
     }
 
     removerDeveloperYaAsignados(developers:typeDeveloper[],idProyecto:string,data:typeProyecto[]):typeDeveloper[]{
         let proyecto:typeProyecto = data.find(proyectoBusqueda => proyectoBusqueda.id === idProyecto)
-        let listaDevelopersLimpia:typeDeveloper[]=[]
         for (const developer of proyecto.developers) {
             developers=developers.filter(dev => dev.id!==developer.id)
         }
-        listaDevelopersLimpia = developers
-        return listaDevelopersLimpia
+        return developers
     }
 }
